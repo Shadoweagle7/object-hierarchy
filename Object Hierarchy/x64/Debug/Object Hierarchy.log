@@ -1,2 +1,5 @@
 ﻿  Object Hierarchy.cpp
-  Object Hierarchy.vcxproj -> C:\Users\matth\source\repos\Object Hierarchy\x64\Debug\Object Hierarchy.exe
+C:\Users\matth\source\repos\Object Hierarchy\repo\object-hierarchy\Object Hierarchy\string.hpp(102,30): error C2556: 'SE7::string SE7::object::to_wstring(void)': overloaded function differs only by return type from 'SE7::string_type<wchar_t> SE7::object::to_wstring(void)'
+C:\Users\matth\source\repos\Object Hierarchy\repo\object-hierarchy\Object Hierarchy\object.hpp(66): message : see declaration of 'SE7::object::to_wstring'
+C:\Users\matth\source\repos\Object Hierarchy\repo\object-hierarchy\Object Hierarchy\string.hpp(102,17): error C2371: 'SE7::object::to_wstring': redefinition; different basic types
+C:\Users\matth\source\repos\Object Hierarchy\repo\object-hierarchy\Object Hierarchy\object.hpp(66): message : see declaration of 'SE7::object::to_wstring'

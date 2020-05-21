@@ -6,5 +6,6 @@
 #include "array.hpp"
 #include "function.hpp"
 #include "string.hpp"
+#include "stdio.hpp"
 
 #endif // !SE7_CORE

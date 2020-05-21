@@ -44,5 +44,8 @@
     <ClInclude Include="stdio.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="thread.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

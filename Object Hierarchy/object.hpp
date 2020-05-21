@@ -45,13 +45,25 @@ static void *operator new(size_t n, garbage_collector &optional_gc) {\
 	return ptr;\
 }
 
+	class lock;
+
+	template<class C>	
+	class string_type;
+
 	class object {
 	private:
+		friend lock;
+	protected:
 		std::mutex object_mutex;
 	public:
 		object() = default;
 		object(const object &) = default;
 		object(object &&) = default;
+
+		// I feel like this is bad practice, but this will be defined in string.hpp.
+		// There must be a better way of doing this (without C++20 import)...
+		virtual string_type<char> to_string();
+		virtual string_type<wchar_t> to_wstring();
 
 		GC_NEW_CONSTRUCTIBLE(object)
 	};
