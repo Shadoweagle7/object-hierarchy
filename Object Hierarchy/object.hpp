@@ -30,7 +30,7 @@ namespace SE7 {
 
 #define GC_NEW_CONSTRUCTIBLE(type)\
 static void *operator new(size_t n) {\
-type *ptr = new type();\
+type *ptr = ::new type();\
 \
 gc.allocate(ptr);\
 \
@@ -47,8 +47,19 @@ static void *operator new(size_t n, garbage_collector &optional_gc) {\
 
 	class lock;
 
-	template<class C>	
-	class string_type;
+	template<class C>
+	class string_base {
+	public:
+		virtual size_t length() const = 0;
+		virtual const C *c_str() const = 0;
+		virtual C &operator[](const size_t) = 0;
+		virtual const C &operator[](const size_t) const = 0;
+		virtual string_base *substring(size_t, size_t) const = 0;
+
+
+
+		virtual bool empty() const = 0;
+	};
 
 	class object {
 	private:
@@ -60,12 +71,15 @@ static void *operator new(size_t n, garbage_collector &optional_gc) {\
 		object(const object &) = default;
 		object(object &&) = default;
 
-		// I feel like this is bad practice, but this will be defined in string.hpp.
-		// There must be a better way of doing this (without C++20 import)...
-		virtual string_type<char> to_string();
-		virtual string_type<wchar_t> to_wstring();
-
 		GC_NEW_CONSTRUCTIBLE(object)
+
+		virtual string_base<char> *to_string() {
+			return nullptr; // TODO: STUB
+		}
+
+		virtual string_base<wchar_t> *to_wstring() {
+			return nullptr; // TODO: STUB
+		}
 	};
 
 	garbage_collector::~garbage_collector() {

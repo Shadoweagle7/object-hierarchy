@@ -1,107 +1,111 @@
 #ifndef SE7_STRING
 #define SE7_STRING
 
+#include <iostream>
+#include <string>
+#include <string_view>
+
 #include "object.hpp"
 #include "primitive.hpp"
 
 namespace SE7 {
 	template<class C>
-	struct character_type {
-		using type = C;
-		static constexpr C null = static_cast<C>(0);
-	};
-
-	template<class C>
-	class string_type : public object {
+	class string_type : public string_base<C>, public object {
 	private:
-		using char_type = character_type<C>;
+		std::basic_string<C> internal_str;
 
-		C *str;
-		size_t len;
+		friend std::ostream &operator<<(std::ostream &os, const string_type<C> &s) {
+			os << s.operator std::basic_string_view<C, std::char_traits<C>>();
 
-		static constexpr size_t length(const C *str) {
-			size_t i = 0;
-
-			while (str[i] != char_type::null) { i++; }
-
-			return i;
+			return os;
 		}
 
-		string_type(size_t len) {
-			this->str = new C[len];
-			this->len = len;
+		friend std::istream &operator>>(std::istream &is, string_type<C> &s) {
+			std::basic_string<C> str = s.operator std::basic_string<C, std::char_traits<C>, std::allocator<C>> &();
+
+			is >> str;
+
+			return is;
+		}
+
+		friend std::wostream &operator<<(std::wostream &wos, const string_type<C> &s) {
+			wos << s.operator std::basic_string_view<C, std::char_traits<C>>();
+
+			return wos;
+		}
+
+		friend std::wistream &operator>>(std::wistream &wis, string_type<C> &s) {
+			std::basic_string<C> &str = s.operator std::basic_string<C, std::char_traits<C>, std::allocator<C>> & ();
+
+			wis >> str;
+
+			return wis;
 		}
 	public:
-		string_type() : str(new C[1]), len(0U) {}
+		static constexpr size_t npos = -1;
 
-		string_type(typename const char_type::type *str) {
-			this->len = string_type::length(str);
-			this->str = new C[this->len];
+		string_type() {}
 
-			for (size_t i = 0; i < this->len; i++) {
-				this->str[i] = str[i];
-			}
-		}
+		string_type(std::basic_string_view<C> str) : internal_str(str) {}
 
 		template<size_t N>
-		string_type(typename const char_type::type (&str)[N]) {
-			this->len = N;
-			this->str = new C[N];
+		string_type(const C (&str)[N]) : internal_str(str) {}
 
-			for (size_t i = 0; i < this->len; i++) {
-				this->str[i] = str[i];
-			}
-		}
-
-		GC_NEW_CONSTRUCTIBLE(string_type);
-
-		string_type operator+(string_type s) {
-			string_type str(this->len + s.len);
-
-			size_t i = 0;
-
-			for (; i < this->len; i++) {
-				str[i] = this->str[i];
-			}
-
-			for (; i < this->len + s.len; i++) {
-				str[i] = s.str[i];
-			}
-
-			return str;
-		}
-
-		C &operator[](size_t n) const {
-			return this->str[n];
-		}
+		string_type(const C *str) : internal_str(str) {}
 
 		size_t length() const {
-			return this->len;
+			return this->internal_str.length();
 		}
 
-		virtual string_type<char> to_string() {
-			return *this;
+		const C *c_str() const {
+			return this->internal_str.c_str();
 		}
 
-		virtual string_type<wchar_t> to_wstring() {
-			return L"";
+		C &operator[](const size_t n) {
+			return this->internal_str[n];
 		}
 
-		~string_type() {
-			delete[] this->str;
+		const C &operator[](const size_t n) const {
+			return this->internal_str[n];
 		}
+
+		string_type *substring(size_t offset, size_t count) const {
+			return new string_type(this->internal_str.substr(offset, count));
+		}
+
+		typename std::basic_string<C>::iterator begin() const {
+			return this->internal_str.begin();
+		}
+
+		typename std::basic_string<C>::const_iterator begin() {
+			return this->internal_str.begin();
+		}
+
+		typename std::basic_string<C>::iterator end() const {
+			return this->internal_str.end();
+		}
+
+		typename std::basic_string<C>::const_iterator end() {
+			return this->internal_str.end();
+		}
+
+		bool empty() const {
+			return this->internal_str.empty();
+		}
+
+		operator std::basic_string<C> &() const {
+			return this->internal_str;
+		}
+
+		operator std::basic_string_view<C>() const {
+			return this->internal_str;
+		}
+
+		GC_NEW_CONSTRUCTIBLE(string_type)
 	};
 
 	using string = string_type<char>;
 	using wide_string = string_type<wchar_t>;
-
-	string object::to_string() {
-		return "object";
-	}
-
-	string object::to_wstring() {
-		return L"object";
-	}
 }
 
 #endif // !SE7_STRING

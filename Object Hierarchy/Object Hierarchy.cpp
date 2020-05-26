@@ -37,8 +37,18 @@ int main() {
 	SE7::wide_string wstr2 = const_wide_char_str;
 
 	std::cout << f(27, nullptr) << " " << std::boolalpha << f.empty() << std::endl;
-
+	
 	SE7::println(str);
+	SE7::println(i);
+	SE7::println(c);
+
+	SE7::wprintln(wstr);
+	SE7::wprintln(wstr2);
+
+	SE7::println(0);
+	SE7::wprintln(0);
+
+	SE7::print(str);
 
 	return 0;
 }

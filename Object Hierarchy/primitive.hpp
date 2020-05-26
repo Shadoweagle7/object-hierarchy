@@ -211,6 +211,7 @@ namespace SE7 {
 	};
 
 	using character = primitive<char>;
+	using boolean = primitive<bool>;
 	using unsigned_character = primitive<unsigned char>;
 	using wide_character = primitive<wchar_t>;
 	using short_integer = primitive<short>;
